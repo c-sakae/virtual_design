@@ -1,4 +1,5 @@
 import java.awt.*;
+import java.io.IOException;
 
 public class ModelSword extends MyWire {
     private double ang = 0.0;
@@ -19,6 +20,13 @@ public class ModelSword extends MyWire {
         super();
         this.setColor(Color.red);
 
+        try{
+            this.loadOBJ("obj/sword.obj");
+        }
+        catch(IOException e){
+            System.out.println("objファイルの読み込みに失敗しました。");
+        }
+        /*
         //頂点情報 *"this."を省略
         addVPos(-0.959122,0.413201,-0.413201);
         addVPos(-0.959122,0.413201,0.413201);
@@ -180,5 +188,6 @@ public class ModelSword extends MyWire {
                 this.addEdge(eST, eED);
             }
         }
+        */
     }
 }

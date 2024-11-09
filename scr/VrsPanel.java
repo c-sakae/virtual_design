@@ -15,6 +15,8 @@ public abstract class VrsPanel extends JPanel implements Runnable{
     public VrsPanel(){
         // 描画用カメラを初期化
         this.cam = new VrsCamera();
+        // スレッド作成後にexecute()するとNullPointerExceptionが出たので移動
+        this.execute();
         //パネル(this)の設定
         this.setPreferredSize(new Dimension(800,600));//コンポーネントサイズの設定
         this.setBackground(Color.white);//コンポーネントの背景色設定
@@ -32,7 +34,7 @@ public abstract class VrsPanel extends JPanel implements Runnable{
         this.timer.start();//別プロセスを立ち上げてrun()（無限ループ）を実行するイメージ？
         //ワイヤーフレームクラス等の初期化
         //あえてスレッドの実行後に記述する理由があるのか？
-        this.execute();
+        //this.execute();
     }
 
     abstract public void execute();

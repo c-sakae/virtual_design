@@ -4,6 +4,15 @@
 
 import java.util.*;
 
+import java.io.BufferedReader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.io.IOException;
+
+
 public class MyWire extends MyPoint{
     protected ArrayList<double[]> vertex; //頂点
     protected ArrayList<int[]> edge; //辺
@@ -55,6 +64,82 @@ public class MyWire extends MyPoint{
         int[] result = edge.get(i);
         return result;
     }
+
+    /*
+     * OBJファイルを読み込み、
+     * this.vertex, this.edgeに登録する
+     */
+
+    public void loadOBJ(String fileName)throws IOException{
+        BufferedReader reader = null;
+        Path path = Paths.get(fileName); //非チェック例外のみ
+        Charset cs = StandardCharsets.UTF_8;
+
+        //ファイルオープン
+        try{
+            reader = Files.newBufferedReader(path, cs); //throws IOE
+        }
+        catch(IOException e){
+            //java.langはimport不要らしい。
+            System.out.println("ファイルオープンに失敗");
+        }
+        //ファイルリード
+        while(true){
+            String line;
+            try{
+                line = reader.readLine(); //throws IOE
+            }
+            catch(IOException e){
+                System.out.println("ファイルリードに失敗");
+                break;
+            }
+            if(line == null)break;
+            if(line.substring(0, 2).equals("v ")){
+                /*
+                this.vertexに登録する
+                line:
+                    v (double)vx (double)vy (double)vz\n
+                */
+                String strs[] = line.split("\s");
+                this.addVPos(
+                    Double.parseDouble(strs[1]), //vx
+                    Double.parseDouble(strs[2]), //vy
+                    Double.parseDouble(strs[3])  //vz
+                );
+            }
+            else if(line.substring(0, 2).equals("f ")){
+                /*
+                this.edgeに登録する
+                line:
+                    f (int)v1/(int)??/(int)?? (int)v2/(int)??/(int)?? ... \n
+                頂点番号viは1から始まる点に注意。
+                頂点情報を格納する配列の要素番号は当然0から。
+                */
+                String strs[] = line.split("[\s/]");
+                List<Integer> face = new ArrayList<Integer>(); //ジェネリクスというらしい
+                //面を形成する点をリストに
+                for (int i=1; i<strs.length; i+=3){
+                    face.add(Integer.decode(strs[i]));
+                }
+                //面を形成する辺を登録
+                for (int i=0; i<face.size(); i++){
+                    int st = i;
+                    int ed = (i+1) % face.size();
+                    this.addEdge(
+                        face.get(st).intValue() - 1,
+                        face.get(ed).intValue() - 1
+                    );
+                }
+            }
+        }
+        //ファイルクローズ
+        try{
+            reader.close(); //throws IOE
+        }
+        catch(IOException e){
+            System.out.println("ファイルクローズに失敗");
+        }
+}
 
     /*
      * this.rotに係るメソッド
