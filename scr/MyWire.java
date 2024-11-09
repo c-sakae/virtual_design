@@ -127,4 +127,20 @@ public class MyWire extends MyPoint{
         this.rot = new MyRot();
         this.rotEuler(rx, ry, rz);
     }
+    public void rotAxisAngle(double nx, double ny, double nz, double ang){
+        //単位ベクトルn=(nx, ny, nz)を軸にang°回転
+        double rad = ang * Math.PI/ 180.0;
+        double cos = Math.cos(rad);
+        double sin = Math.sin(rad);
+
+        MyRot R = new MyRot();
+        //ロドリゲスの回転公式
+        R.setMat(
+            nx*nx*(1-cos)   +cos, nx*ny*(1-cos)-nz*sin, nz*nx*(1-cos)+ny*sin,
+            nx*ny*(1-cos)+nz*sin, ny*ny*(1-cos)   +cos, ny*nz*(1-cos)-nx*sin,
+            nz*nx*(1-cos)-ny*sin, ny*nz*(1-cos)+nx*sin, nz*nz*(1-cos)   +cos
+        );
+
+        this.rot.mulMat(R);
+    }
 }
