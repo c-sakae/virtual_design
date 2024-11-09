@@ -26,6 +26,7 @@ public abstract class VrsPanel extends JPanel implements Runnable{
         this.f.pack();//フレームサイズを自動設定
         this.f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.f.setVisible(true);
+        this.f.setTitle("title");
 
         // スレッドを作成し実行
         //コンストラクタ実行後に処理は発生しないが、 execute()を上に書けば、別スレッドを作成する必要はないのでは？

@@ -35,6 +35,17 @@ public class Main extends VrsPanel{
 
         VrsCamera cam = getCam();
         cam.setF(7.0);
+
+        JButton btn01 = new JButton("button01");
+        btn01.addActionListener(
+            new BtnListener(this.sword, "TurnBlack")
+        );
+        JButton btn02 = new JButton("button02");
+        btn02.addActionListener(
+            new BtnListener(this.sword, "TurnGreen")
+        );
+        this.add(btn01);
+        this.add(btn02);
     }
 
     @Override
