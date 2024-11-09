@@ -3,23 +3,25 @@ public class ModelCube extends MyWire{
     @Override
     public void run(){
         super.run();
+        //壁に到達すると逆側に接続される
         if(this.posX > 10){
             this.posX = -10;
         }
         else if (this.posX < -10){
             this.posX = 10;
         }
-        rotEuler(1, 2, 1);
+        //回転
+        this.rotEuler(1, 2, 1);
     }
 
     public ModelCube(){
         super();
+
         this.setPos(0, 3, 15);
         this.setVelX(0.1);
-
         this.setColor(Color.blue);
-        //this.setAcc(0.00, -0.01, 0.00);
         
+        //頂点の登録
         this.addVPos( 1,  1, -1);
         this.addVPos(-1,  1, -1);
         this.addVPos( 1, -1, -1);
@@ -30,6 +32,7 @@ public class ModelCube extends MyWire{
         this.addVPos( 1, -1,  1);
         this.addVPos(-1, -1,  1);
 
+        //辺の登録
         this.addEdge(0,1);
         this.addEdge(1,3);
         this.addEdge(3,2);

@@ -1,22 +1,13 @@
+/*
+ * 点群モデル・ワイヤーフレームモデル
+ */
+
 import java.util.*;
 
 public class MyWire extends MyPoint{
-    protected ArrayList<double[]> vertex;
-    protected ArrayList<int[]> edge;
-    protected MyRot rot;
-
-    public int eSize(){
-        return this.edge.size();
-    }
-
-    public void addEdge(int st, int ed){
-        int[] id = {st, ed};
-        this.edge.add(id);
-    }
-    public int[] getEdgeID(int i){
-        int[] result = edge.get(i);
-        return result;
-    }
+    protected ArrayList<double[]> vertex; //頂点
+    protected ArrayList<int[]> edge; //辺
+    protected MyRot rot; //姿勢
 
     public MyWire(){
         super();
@@ -25,7 +16,52 @@ public class MyWire extends MyPoint{
         this.edge = new ArrayList<int[]>();
     }
 
+    /*
+     * this.vertexに係るメソッド
+     */
+
+    public int vSize(){
+        //頂点数を返す
+        return this.vertex.size();
+    }
+    public void addVPos(double x, double y, double z){
+        //頂点を追加する（モデル中心点からの相対位置）。
+        double[] p = {x, y, z};
+        this.vertex.add(p);
+    }
+    public double[] getVPos(int i){
+        //i番目の頂点の座標を返す（グローバル座標系）。
+        double[] p = this.vertex.get(i);
+        double[] rp = this.rot.mulVec(p);
+        double[] result = {rp[0]+this.getX(), rp[1]+this.getY(), rp[2]+this.getZ()};
+        return result;
+    }
+
+    /*
+     * this.edgeに係るメソッド
+     */
+
+    public int eSize(){
+        //辺の数を取得するメソッド
+        return this.edge.size();
+    }
+    public void addEdge(int st, int ed){
+        //頂点番号を用いて、辺を追加するメソッド
+        int[] id = {st, ed};
+        this.edge.add(id);
+    }
+    public int[] getEdgeID(int i){
+        //辺番号を用いて、辺を構成する頂点番号を返すメソッド
+        int[] result = edge.get(i);
+        return result;
+    }
+
+    /*
+     * this.rotに係るメソッド
+     */
+
     public void rotX (double rx){
+        //グローバル座標x軸周りにモデルを回転
         double rad = rx * Math.PI / 180.0;
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
@@ -39,11 +75,6 @@ public class MyWire extends MyPoint{
 
         this.rot.mulMat(Mx);
     }
-    public void setRX(double rx){
-        this.rot = new MyRot();
-        this.rotX(rx);
-    }
-    
     public void rotY(double ry){
         double rad = ry * Math.PI / 180.0;
         double cos = Math.cos(rad);
@@ -72,6 +103,11 @@ public class MyWire extends MyPoint{
 
         this.rot.mulMat(Mz);
     }
+    public void setRX(double rx){
+        //x軸周りに回転した状態に初期化
+        this.rot = new MyRot();
+        this.rotX(rx);
+    }
     public void setRY(double ry){
         this.rot = new MyRot();
         this.rotY(ry);
@@ -81,27 +117,14 @@ public class MyWire extends MyPoint{
         this.rotZ(rz);
     }
     public void rotEuler(double rx, double ry, double rz){
+        //x軸周り、y軸、z軸の順に回転
         this.rotX(rx);
         this.rotY(ry);
         this.rotZ(rz);
     }
     public void setEuler(double rx, double ry, double rz){
+        //x, y, zの順に回転させた状態に初期化
         this.rot = new MyRot();
         this.rotEuler(rx, ry, rz);
-    }
-    public int vSize(){
-        return this.vertex.size();
-    }
-
-    public void addVPos(double x, double y, double z){
-        double[] p = {x, y, z};
-        this.vertex.add(p);
-    }
-
-    public double[] getVPos(int i){
-        double[] p = this.vertex.get(i);
-        double[] rp = this.rot.mulVec(p);
-        double[] result = {rp[0]+this.getX(), rp[1]+this.getY(), rp[2]+this.getZ()};
-        return result;
     }
 }

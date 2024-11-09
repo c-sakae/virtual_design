@@ -1,26 +1,25 @@
 import java.awt.*;
 
 public class ModelSword extends MyWire {
-    private double ang = 0;
+    private double ang = 0.0;
 
     public void run(){
-        ang++;
+        this.ang++; //double型でも使える？
 
-        double rad = ang * Math.PI / 180.0;
+        double rad = this.ang * Math.PI / 180.0;
 
         double z = 15.0 + 5.0 * Math.cos(3.0*rad);
         double x = 1.5 + 5.0 * Math.sin(5.0*rad);
         double y = 3.0;
-        setPos(x, y, z);
+        this.setPos(x, y, z);
 
-        rotX(1);
+        this.rotX(1.0);
     }
     public ModelSword(){
         super();
-        setColor(Color.red);
-        //setAcc(0.00, -0.01, 0.00);
+        this.setColor(Color.red);
 
-        //頂点情報
+        //頂点情報 *"this."を省略
         addVPos(-0.959122,0.413201,-0.413201);
         addVPos(-0.959122,0.413201,0.413201);
         addVPos(-0.423302,0.566556,0.048314);
@@ -178,7 +177,7 @@ public class ModelSword extends MyWire {
                 int eST = face[i][st] - 1;
                 int eED = face[i][ed] - 1;
                 //辺としてセット
-                addEdge(eST, eED);
+                this.addEdge(eST, eED);
             }
         }
     }
