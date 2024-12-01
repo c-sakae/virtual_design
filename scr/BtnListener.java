@@ -10,9 +10,9 @@ public class BtnListener implements ActionListener {
         this.wf = wireFrame;
         switch(eventMode){
             case "TurnBlack":
-                this.em = eventMode;
-                break;
             case "TurnGreen":
+            case "rotY":
+            case "rotX":
                 this.em = eventMode;
                 break;
             default:
@@ -27,6 +27,12 @@ public class BtnListener implements ActionListener {
             case "TurnGreen":
                 this.turnGreen();
                 break;
+            case "rotY":
+                this.rotY();
+                break;
+            case "rotX":
+                this.rotX();
+                break;
         }
     }
     private void turnBlack(){
@@ -34,5 +40,11 @@ public class BtnListener implements ActionListener {
     }
     private void turnGreen(){
         this.wf.setColor(Color.green);
+    }
+    private void rotY(){
+        this.wf.rotY(10);
+    }
+    private void rotX(){
+        this.wf.rotX(10);
     }
 }
