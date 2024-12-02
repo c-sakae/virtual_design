@@ -9,10 +9,8 @@ import java.awt.*;
 import java.util.*;
 
 public class Main extends VrsPanel{
-    //private ModelCube cube;
-    //private ModelA modelA;
-    //private ModelSword sword;
     private ModelDp modelDp;
+    private ModelCircle[] circles;
 
     public static void main(String[] argv){
         Main m = new Main();
@@ -26,16 +24,21 @@ public class Main extends VrsPanel{
         /*
          * 初期化
          */
-        //this.sword = new ModelSword();
-
-        //this.modelA = new ModelA();
-        //this.modelA.setEuler(60, 20, 30);
-
-        //this.cube = new ModelCube();
-        //this.cube.setRX(60);
-
         this.modelDp = new ModelDp();
         this.modelDp.setPos(0, -3, 10);
+
+        this.circles = new ModelCircle[25];
+        double[] diameter_6 = { //直径の6倍
+            2.8, 4.2, 4.8, 5.2, 5.6, 5.9, 
+            6.0, 6.0, 6.0, 6.0, 6.0, 6.0,
+            5.7, 5.5, 5.0, 4.5, 3.8, 3.1,
+            2.3, 1.8, 1.2, 0.8, 0.6, 0.3,
+            0.0
+        };
+        double[] center = {0.0, 0.0, 15.0};
+        for (int i=0; i<25; i++){
+            this.circles[i] = new ModelCircle(center, diameter_6[i]/12.0, (double)i/24.0);
+        }
 
         VrsCamera cam = getCam();
         cam.setF(7.0);
@@ -62,10 +65,10 @@ public class Main extends VrsPanel{
         /*
          * シーンの更新
          */
-        //this.sword.run();
-        //this.modelA.run();
-        //this.cube.run();
         this.modelDp.run();
+        for (int i=0; i<25; i++){
+            this.circles[i].run();
+        }
     }
 
     @Override
@@ -73,9 +76,9 @@ public class Main extends VrsPanel{
         /*
          * レンダリング
          */
-        //cam.shotPers(this.sword);
-        //cam.shotPers(this.modelA);
-        //cam.shotPers(this.cube);
+        for (int i=0; i<25; i++){
+            cam.shotPers(this.circles[i]);
+        }
         cam.shotPers(this.modelDp);
     }
 }
