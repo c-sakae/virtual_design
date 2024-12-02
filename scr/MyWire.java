@@ -261,7 +261,7 @@ public class MyWire extends MyPoint{
     }
 
     public void scale(double kx, double ky, double kz){
-        //モデルの原点を中心にk=(kx, ky, kz)だけ拡大
+        //モデルの原点を中心にx,y,z軸方向へkx,ky,kzだけ拡大
         MySqrMat Sc = new MySqrMat(4);
         Sc.setMat(
              kx, 0.0, 0.0, 0.0,
@@ -273,7 +273,7 @@ public class MyWire extends MyPoint{
         this.htMat.mulMat(Sc);
     }
     public void scaleHere(double kx, double ky, double kz){
-        //this.htMatのplaceを中心にk=(kx, ky, kz)だけ拡大
+        //this.htMatのplaceを中心にkx, ky, kzだけ拡大
         MySqrMat Sc = new MySqrMat(4);
         Sc.setMat(
              kx, 0.0, 0.0, this.htMat.getData(0, 3)*(1.0-kx),

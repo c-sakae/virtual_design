@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Main extends VrsPanel{
     private ModelDp modelDp;
-    private ModelCircle[] circles;
+    private ModelSlime slime;
 
     public static void main(String[] argv){
         Main m = new Main();
@@ -27,18 +27,8 @@ public class Main extends VrsPanel{
         this.modelDp = new ModelDp();
         this.modelDp.setPos(0, -3, 10);
 
-        this.circles = new ModelCircle[25];
-        double[] diameter_6 = { //直径の6倍
-            2.8, 4.2, 4.8, 5.2, 5.6, 5.9, 
-            6.0, 6.0, 6.0, 6.0, 6.0, 6.0,
-            5.7, 5.5, 5.0, 4.5, 3.8, 3.1,
-            2.3, 1.8, 1.2, 0.8, 0.6, 0.3,
-            0.0
-        };
-        double[] center = {0.0, 0.0, 15.0};
-        for (int i=0; i<25; i++){
-            this.circles[i] = new ModelCircle(center, diameter_6[i]/12.0, (double)i/24.0);
-        }
+        this.slime = new ModelSlime();
+
 
         VrsCamera cam = getCam();
         cam.setF(7.0);
@@ -66,9 +56,7 @@ public class Main extends VrsPanel{
          * シーンの更新
          */
         this.modelDp.run();
-        for (int i=0; i<25; i++){
-            this.circles[i].run();
-        }
+        this.slime.run();
     }
 
     @Override
@@ -76,9 +64,7 @@ public class Main extends VrsPanel{
         /*
          * レンダリング
          */
-        for (int i=0; i<25; i++){
-            cam.shotPers(this.circles[i]);
-        }
+        cam.shotPers(this.slime);
         cam.shotPers(this.modelDp);
     }
 }
