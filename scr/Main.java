@@ -48,8 +48,13 @@ public class Main extends VrsPanel{
         btn02.addActionListener(
             new BtnListener(this.modelDp, "rotX")
         );
+        JButton btn03 = new JButton("init");
+        btn03.addActionListener(
+            new BtnListener(this.modelDp, "initMat")
+        );
         this.add(btn01);
         this.add(btn02);
+        this.add(btn03);
     }
 
     @Override

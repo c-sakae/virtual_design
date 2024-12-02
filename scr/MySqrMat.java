@@ -142,6 +142,11 @@ public class MySqrMat{
         };
     }
 
+    public double getData(int i, int j){
+        //i行j列目の要素を返す
+        return this.mat[i][j];
+    }
+
     public double[] getLine(int ln){
         //行列の第ln行目を取得
         double[] result = this.mat[ln].clone();
@@ -202,6 +207,7 @@ public class MySqrMat{
 
     public double[] mulVec(double[] vec){
         //行列に右から列ベクトルをかける
+        //行ベクトル表記のvecを列ベクトルとして扱う
         if (vec.length != this.mat.length){
             throw new IllegalArgumentException();
         }

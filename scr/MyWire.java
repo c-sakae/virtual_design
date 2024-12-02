@@ -16,11 +16,12 @@ import java.io.IOException;
 public class MyWire extends MyPoint{
     protected ArrayList<double[]> vertex; //頂点
     protected ArrayList<int[]> edge; //辺
-    protected MySqrMat rot; //姿勢
+    //同次変換行列（homogeneous transformation matrix） = { {RotMat(3dim) zeroVec(3dim)}, {placeVec(3dim) 1} }
+    protected MySqrMat htMat;
 
     public MyWire(){
         super();
-        this.rot = new MySqrMat(3);
+        this.initMat();
         this.vertex = new ArrayList<double[]>();
         this.edge = new ArrayList<int[]>();
     }
@@ -41,7 +42,7 @@ public class MyWire extends MyPoint{
     public double[] getVPos(int i){
         //i番目の頂点の座標を返す（グローバル座標系）。
         double[] p = this.vertex.get(i);
-        double[] rp = this.rot.mulVec(p);
+        double[] rp = this.htMat.mulVec(new double[]{p[0], p[1], p[2], 1});
         double[] result = {rp[0]+this.getX(), rp[1]+this.getY(), rp[2]+this.getZ()};
         return result;
     }
@@ -142,8 +143,13 @@ public class MyWire extends MyPoint{
 }
 
     /*
-     * this.rotに係るメソッド
+     * this.htMatに係るメソッド
      */
+
+    public void initMat(){
+        //同次変換行列を初期化
+        this.htMat = new MySqrMat(4);
+    }
 
     public void rotX (double rx){
         //グローバル座標x軸周りにモデルを回転
@@ -151,54 +157,57 @@ public class MyWire extends MyPoint{
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        MySqrMat Mx = new MySqrMat();
+        MySqrMat Mx = new MySqrMat(4);
         Mx.setMat(
-            1, 0, 0,
-            0, cos, -sin,
-            0, sin, cos
+            1.0, 0.0,  0.0, 0.0,
+            0.0, cos, -sin, 0.0,
+            0.0, sin,  cos, 0.0,
+            0.0, 0.0,  0.0, 1.0
         );
 
-        this.rot.mulMat(Mx);
+        this.htMat.mulMat(Mx);
     }
     public void rotY(double ry){
         double rad = ry * Math.PI / 180.0;
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        MySqrMat My = new MySqrMat();
+        MySqrMat My = new MySqrMat(4);
         My.setMat(
-            cos, 0, sin,
-            0, 1, 0,
-            -sin, 0, cos
+             cos, 0.0, sin, 0.0,
+             0.0, 1.0, 0.0, 0.0,
+            -sin, 0.0, cos, 0.0,
+             0.0, 0.0, 0.0, 1.0
         );
 
-        this.rot.mulMat(My);
+        this.htMat.mulMat(My);
     }
     public void rotZ(double rz){
         double rad = rz * Math.PI / 180.0;
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        MySqrMat Mz = new MySqrMat();
+        MySqrMat Mz = new MySqrMat(4);
         Mz.setMat(
-            cos, -sin, 0,
-            sin, cos, 0,
-            0, 0, 1
+            cos, -sin, 0.0, 0.0,
+            sin,  cos, 0.0, 0.0,
+            0.0,  0.0, 1.0, 0.0,
+            0.0,  0.0, 0.0, 1.0
         );
 
-        this.rot.mulMat(Mz);
+        this.htMat.mulMat(Mz);
     }
     public void setRX(double rx){
         //x軸周りに回転した状態に初期化
-        this.rot = new MySqrMat();
+        this.htMat = new MySqrMat(4);
         this.rotX(rx);
     }
     public void setRY(double ry){
-        this.rot = new MySqrMat();
+        this.htMat = new MySqrMat(4);
         this.rotY(ry);
     }
     public void setRZ(double rz){
-        this.rot = new MySqrMat();
+        this.htMat = new MySqrMat(4);
         this.rotZ(rz);
     }
     public void rotEuler(double rx, double ry, double rz){
@@ -209,7 +218,7 @@ public class MyWire extends MyPoint{
     }
     public void setEuler(double rx, double ry, double rz){
         //x, y, zの順に回転させた状態に初期化
-        this.rot = new MySqrMat();
+        this.htMat = new MySqrMat(4);
         this.rotEuler(rx, ry, rz);
     }
     public void rotAxisAngle(double nx, double ny, double nz, double ang){
@@ -218,14 +227,61 @@ public class MyWire extends MyPoint{
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        MySqrMat R = new MySqrMat();
+        MySqrMat R = new MySqrMat(4);
         //ロドリゲスの回転公式
         R.setMat(
-            nx*nx*(1-cos)   +cos, nx*ny*(1-cos)-nz*sin, nz*nx*(1-cos)+ny*sin,
-            nx*ny*(1-cos)+nz*sin, ny*ny*(1-cos)   +cos, ny*nz*(1-cos)-nx*sin,
-            nz*nx*(1-cos)-ny*sin, ny*nz*(1-cos)+nx*sin, nz*nz*(1-cos)   +cos
+            nx*nx*(1-cos)   +cos, nx*ny*(1-cos)-nz*sin, nz*nx*(1-cos)+ny*sin, 0.0,
+            nx*ny*(1-cos)+nz*sin, ny*ny*(1-cos)   +cos, ny*nz*(1-cos)-nx*sin, 0.0,
+            nz*nx*(1-cos)-ny*sin, ny*nz*(1-cos)+nx*sin, nz*nz*(1-cos)   +cos, 0.0,
+                             0.0,                  0.0,                  0.0, 1.0
         );
 
-        this.rot.mulMat(R);
+        this.htMat.mulMat(R);
+    }
+
+    public void translate(double dx, double dy, double dz){
+        //delta=(dx, dy, dz)だけ平行移動
+        MySqrMat Tr = new MySqrMat(4);
+        Tr.setMat(
+            1.0, 0.0, 0.0,  dx,
+            0.0, 1.0, 0.0,  dy,
+            0.0, 0.0, 1.0,  dz,
+            0.0, 0.0, 0.0, 1.0
+        );
+
+        this.htMat.mulMat(Tr);
+    }
+
+    public void replace(double x, double y, double z){
+        //モデルの原点に戻った後、(x, y, z)だけ平行移動
+        //回転や拡大縮小はそのまま
+        this.htMat.setData(0, 3, x);
+        this.htMat.setData(1, 3, y);
+        this.htMat.setData(2, 3, z);
+    }
+
+    public void scale(double kx, double ky, double kz){
+        //モデルの原点を中心にk=(kx, ky, kz)だけ拡大
+        MySqrMat Sc = new MySqrMat(4);
+        Sc.setMat(
+             kx, 0.0, 0.0, 0.0,
+            0.0,  ky, 0.0, 0.0,
+            0.0, 0.0,  kz, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        );
+
+        this.htMat.mulMat(Sc);
+    }
+    public void scaleHere(double kx, double ky, double kz){
+        //this.htMatのplaceを中心にk=(kx, ky, kz)だけ拡大
+        MySqrMat Sc = new MySqrMat(4);
+        Sc.setMat(
+             kx, 0.0, 0.0, this.htMat.getData(0, 3)*(1.0-kx),
+            0.0,  ky, 0.0, this.htMat.getData(1, 3)*(1.0-ky),
+            0.0, 0.0,  kz, this.htMat.getData(2, 3)*(1.0-kz),
+            0.0, 0.0, 0.0,                       1.0
+        );
+
+        this.htMat.mulMat(Sc);
     }
 }

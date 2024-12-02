@@ -13,6 +13,7 @@ public class BtnListener implements ActionListener {
             case "TurnGreen":
             case "rotY":
             case "rotX":
+            case "initMat":
                 this.em = eventMode;
                 break;
             default:
@@ -33,6 +34,9 @@ public class BtnListener implements ActionListener {
             case "rotX":
                 this.rotX();
                 break;
+            case "initMat":
+                this.initMat();
+                break;
         }
     }
     private void turnBlack(){
@@ -46,5 +50,8 @@ public class BtnListener implements ActionListener {
     }
     private void rotX(){
         this.wf.rotX(10);
+    }
+    private void initMat(){
+        this.wf.initMat();
     }
 }
