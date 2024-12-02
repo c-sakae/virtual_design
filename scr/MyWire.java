@@ -16,11 +16,11 @@ import java.io.IOException;
 public class MyWire extends MyPoint{
     protected ArrayList<double[]> vertex; //頂点
     protected ArrayList<int[]> edge; //辺
-    protected MyRot rot; //姿勢
+    protected MySqrMat rot; //姿勢
 
     public MyWire(){
         super();
-        this.rot = new MyRot();
+        this.rot = new MySqrMat(3);
         this.vertex = new ArrayList<double[]>();
         this.edge = new ArrayList<int[]>();
     }
@@ -151,7 +151,7 @@ public class MyWire extends MyPoint{
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        MyRot Mx = new MyRot();
+        MySqrMat Mx = new MySqrMat();
         Mx.setMat(
             1, 0, 0,
             0, cos, -sin,
@@ -165,7 +165,7 @@ public class MyWire extends MyPoint{
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        MyRot My = new MyRot();
+        MySqrMat My = new MySqrMat();
         My.setMat(
             cos, 0, sin,
             0, 1, 0,
@@ -179,7 +179,7 @@ public class MyWire extends MyPoint{
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        MyRot Mz = new MyRot();
+        MySqrMat Mz = new MySqrMat();
         Mz.setMat(
             cos, -sin, 0,
             sin, cos, 0,
@@ -190,15 +190,15 @@ public class MyWire extends MyPoint{
     }
     public void setRX(double rx){
         //x軸周りに回転した状態に初期化
-        this.rot = new MyRot();
+        this.rot = new MySqrMat();
         this.rotX(rx);
     }
     public void setRY(double ry){
-        this.rot = new MyRot();
+        this.rot = new MySqrMat();
         this.rotY(ry);
     }
     public void setRZ(double rz){
-        this.rot = new MyRot();
+        this.rot = new MySqrMat();
         this.rotZ(rz);
     }
     public void rotEuler(double rx, double ry, double rz){
@@ -209,7 +209,7 @@ public class MyWire extends MyPoint{
     }
     public void setEuler(double rx, double ry, double rz){
         //x, y, zの順に回転させた状態に初期化
-        this.rot = new MyRot();
+        this.rot = new MySqrMat();
         this.rotEuler(rx, ry, rz);
     }
     public void rotAxisAngle(double nx, double ny, double nz, double ang){
@@ -218,7 +218,7 @@ public class MyWire extends MyPoint{
         double cos = Math.cos(rad);
         double sin = Math.sin(rad);
 
-        MyRot R = new MyRot();
+        MySqrMat R = new MySqrMat();
         //ロドリゲスの回転公式
         R.setMat(
             nx*nx*(1-cos)   +cos, nx*ny*(1-cos)-nz*sin, nz*nx*(1-cos)+ny*sin,
